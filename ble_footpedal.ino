@@ -5,8 +5,9 @@ BLEDis bledis;
 BLEHidTouchpad touchpad;
 
 bool finger_down = false;
-int16_t finger_x1 = 0;
-int16_t finger_y1 = 0;
+int16_t finger_x1 = 2000;
+int16_t finger_y1 = 2000;
+int16_t last_scan_time = 0;
 
 void setup() 
 {
@@ -46,7 +47,7 @@ void startAdv(void)
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
-  Bluefruit.Advertising.addAppearance(BLE_APPEARANCE_HID_MOUSE);
+//  Bluefruit.Advertising.addAppearance(BLE_APPEARANCE_HID_MOUSE);
   
   // Include BLE HID service
   Bluefruit.Advertising.addService(touchpad);
@@ -86,32 +87,33 @@ void loop()
     {
       case '[':
         finger_down = true;
+        last_scan_time = scan_time;
         Serial.println("Finger down");
       break;
 
       case ']':
-        touchpad.send_report(false, 1, finger_x1, finger_y1, scan_time, 1);
+        touchpad.send_report(false, 0, finger_x1, finger_y1, scan_time, 1);
         finger_down = false;
-        finger_x1 = 0;
-        finger_y1 = 0;
+        finger_x1 = 2000;
+        finger_y1 = 2000;
         Serial.println("Finger up");
       break;
 
       // WASD to move the mouse
       case 'W':
-        finger_y1 = finger_y1 + 10;
+        finger_y1 = finger_y1 + 1;
       break;
 
       case 'A':
-        finger_x1 = finger_x1 - 10;
+        finger_x1 = finger_x1 - 1;
       break;
 
       case 'S':
-        finger_y1  = finger_y1 - 10;
+        finger_y1  = finger_y1 - 1;
       break;
 
       case 'D':
-        finger_x1 = finger_x1 + 10;
+        finger_x1 = finger_x1 + 1;
       break;
 
       default: break;
@@ -119,9 +121,9 @@ void loop()
   }
     
   if (finger_down) {
-    bool info = touchpad.send_report(true, 1, finger_x1, finger_y1, scan_time, 1);
-    Serial.print(info);
-    Serial.print(" ");
-    Serial.println(finger_x1);
+    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time - last_scan_time, 1);
+    last_scan_time = scan_time;
+    Serial.println(millis());
+//    delay(1/);
   }
 }

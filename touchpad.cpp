@@ -6,23 +6,6 @@
 
 uint8_t const hid_report_descriptor[] =
 {
-    // 0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)  // 54
-    // 0x09, 0x02,                    // USAGE (Mouse)
-    // 0xa1, 0x01,                    // COLLECTION (Application)
-    // 0x09, 0x01,                    //   USAGE (Pointer)
-    // 0xa1, 0x00,                    //   COLLECTION (Physical)
-    // 0x85, MOUSE_REPORT_ID,         //     REPORT_ID (1)
-    // 0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
-    // 0x09, 0x30,                    //     USAGE (X)
-    // 0x09, 0x31,                    //     USAGE (Y)
-    // 0x09, 0x38,                    //     USAGE (Wheel)
-    // 0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
-    // 0x25, 0x7f,                    //     LOGICAL_MAXIMUM (127)
-    // 0x75, 0x08,                    //     REPORT_SIZE (8)
-    // 0x95, 0x03,                    //     REPORT_COUNT (3)
-    // 0x81, 0x06,                    //     INPUT (Data,Var,Rel)
-    // 0xc0,                          //   END_COLLECTION
-    // 0xc0,                          // END_COLLECTION
     0x05, 0x0d,                         // USAGE_PAGE (Digitizers)          
     0x09, 0x05,                         // USAGE (Touch Pad)             
     0xa1, 0x01,                         // COLLECTION (Application)         
@@ -36,14 +19,26 @@ uint8_t const hid_report_descriptor[] =
     0x95, 0x02,                         //       REPORT_COUNT (2)
     0x75, 0x01,                         //       REPORT_SIZE (1)
     0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    
     0x95, 0x01,                         //       REPORT_COUNT (1)
     0x75, 0x02,                         //       REPORT_SIZE (2)
     0x25, 0x02,                         //       LOGICAL_MAXIMUM (2)
     0x09, 0x51,                         //       USAGE (Contact Identifier)
     0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    
     0x75, 0x01,                         //       REPORT_SIZE (1)
     0x95, 0x04,                         //       REPORT_COUNT (4)             
     0x81, 0x03,                         //       INPUT (Cnst,Var,Abs)
+
+//    0x05, 0x01,                         //       USAGE_PAGE (Generic Desk..
+//    0x09, 0x30,                         //       USAGE (X)                    
+//    0x09, 0x31,                         //       USAGE (Y)
+//    0x15, 0x80,                         //       LOGICAL_MINIMUM (-128)
+//    0x25, 0x7f,                         //       LOGICAL_MAXIMUM (127)
+//    0x75, 0x08,                         //       REPORT_SIZE (8)
+//    0x95, 0x02,                         //       REPORT_COUNT (2)         
+//    0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    
     0x05, 0x01,                         //       USAGE_PAGE (Generic Desk..
     0x15, 0x00,                         //       LOGICAL_MINIMUM (0)
     0x26, 0xff, 0x0f,                   //       LOGICAL_MAXIMUM (4095)         
@@ -54,11 +49,13 @@ uint8_t const hid_report_descriptor[] =
     0x35, 0x00,                         //       PHYSICAL_MINIMUM (0)         
     0x46, 0x90, 0x01,                   //       PHYSICAL_MAXIMUM (400)
     0x95, 0x01,                         //       REPORT_COUNT (1)         
-    0x81, 0x02,                         //       INPUT (Data,Var,Abs)         
+    0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+           
     0x46, 0x13, 0x01,                   //       PHYSICAL_MAXIMUM (275)
     0x09, 0x31,                         //       USAGE (Y)                    
     0x81, 0x02,                         //       INPUT (Data,Var,Abs)    
     0xc0,                               //    END_COLLECTION
+    
     0x55, 0x0C,                         //    UNIT_EXPONENT (-4)           
     0x66, 0x01, 0x10,                   //    UNIT (Seconds)        
     0x47, 0xff, 0xff, 0x00, 0x00,      //     PHYSICAL_MAXIMUM (65535)
@@ -66,29 +63,25 @@ uint8_t const hid_report_descriptor[] =
     0x75, 0x10,                           //  REPORT_SIZE (16)             
     0x95, 0x01,                           //  REPORT_COUNT (1) 
     0x05, 0x0d,                         //    USAGE_PAGE (Digitizers)
-    0x09, 0x56,                         //    USAGE (Scan Time)    
-    0x81, 0x02,                           //  INPUT (Data,Var,Abs)         
+    0x09, 0x56,                         //    USAGE (Scan Time)   
+    0x81, 0x02,                           //  INPUT (Data,Var,Abs)
+           
     0x09, 0x54,                         //    USAGE (Contact count)
     0x25, 0x7f,                           //  LOGICAL_MAXIMUM (127) 
     0x95, 0x01,                         //    REPORT_COUNT (1)
     0x75, 0x08,                         //    REPORT_SIZE (8)    
     0x81, 0x02,                         //    INPUT (Data,Var,Abs)
-    0x05, 0x09,                         //    USAGE_PAGE (Button)         
-    0x09, 0x01,                         //    USAGE_(Button 1)     
-    0x25, 0x01,                         //    LOGICAL_MAXIMUM (1)          
-    0x75, 0x01,                         //    REPORT_SIZE (1)              
-    0x95, 0x01,                         //    REPORT_COUNT (1)             
-    0x81, 0x02,                         //    INPUT (Data,Var,Abs)
-    0x95, 0x07,                          //   REPORT_COUNT (7)                 
-    0x81, 0x03,                         //    INPUT (Cnst,Var,Abs)
+    
+//    0x05, 0x09,                         //    USAGE_PAGE (Button)         
+//    0x09, 0x01,                         //    USAGE_(Button 1)     
+//    0x25, 0x01,                         //    LOGICAL_MAXIMUM (1)          
+//    0x75, 0x01,                         //    REPORT_SIZE (1)              
+//    0x95, 0x01,                         //    REPORT_COUNT (1)             
+//    0x81, 0x02,                         //    INPUT (Data,Var,Abs)
+//    0x95, 0x07,                          //   REPORT_COUNT (7)                 
+//    0x81, 0x03,                         //    INPUT (Cnst,Var,Abs)
     0xc0,                               // END_COLLECTION
 };
-
-// typedef struct {
-//     int8_t x;
-//     int8_t y;
-//     int8_t wheel; 
-// } mouse_report_t;
 
 typedef struct {
     // one report is sent with each finger which is identified by its contact id
@@ -100,13 +93,15 @@ typedef struct {
             // then, no more reports are sent for that fingers contact
         // contact id identifies which finger we are sending the data for 
             // e.g., for two fingers we would have contact id 0 for the first report and contact id 1 for the second report
-    int16_t x; // x position of finger (between 0 and 4095)
-    int16_t y; // y position of finger (between 0 and 4095)
+//    int16_t x; // x position of finger (between 0 and 4095)
+//    int16_t y; // y position of finger (between 0 and 4095)
+    int16_t x;
+    int16_t y;
     int16_t scan_time; // in 100 microsecond units
         // seems like this should be reported at consistent intervals while at least one finger is on the touchpad
         // when more than one finger is in contact, each one of the finger's reports should have the same scan time
     int8_t contact_count; // number of fingers on the touchpad (between 0 and 3)
-    uint8_t button; // whether the touchpad is pressed hard enough to click (0 or 1)
+//    uint8_t button; // whether the touchpad is pressed hard enough to click (0 or 1)
 } touchpad_report_t;
 
 BLEHidTouchpad::BLEHidTouchpad()
@@ -140,13 +135,19 @@ bool BLEHidTouchpad::send_report(bool tip_switch, uint8_t contact_id, int16_t x,
             // contact count shouldn't change until the frame after the tip switch is switched to false
         // confidence is set to true when the contact is larger than a finger (indicating that it could be an unintentional contact)
         // scan time should be reported as the same for all fingers in the frame and is in 100 microsecond units (i.e., (int16_t) (micros() / 100))
-    // x and y should be between 0 and 4095
+    // x and y should be between -128 and 127
+    Serial.print(millis());
+    Serial.print(" ");
     touchpad_report_t report;
     report.contact_data = confidence + (tip_switch << 1) + (contact_id << 2);
     report.x = x;
     report.y = y;
     report.scan_time = scan_time;
     report.contact_count = contact_count;
-    report.button = button;
+//    report.button = button;
+    Serial.print(report.contact_data);
+    Serial.print(" ");
+    Serial.print(millis());
+    Serial.print(" ");
     return inputReport(BLE_CONN_HANDLE_INVALID, TOUCHPAD_REPORT_ID, &report, sizeof(touchpad_report_t));
 }
