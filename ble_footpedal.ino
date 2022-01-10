@@ -94,8 +94,8 @@ void loop()
       case ']':
         touchpad.send_report(false, 0, finger_x1, finger_y1, scan_time, 1);
         finger_down = false;
-        finger_x1 = 2000;
-        finger_y1 = 2000;
+        finger_x1 = 0;
+        finger_y1 = 0;
         Serial.println("Finger up");
       break;
 
@@ -116,14 +116,19 @@ void loop()
         finger_x1 = finger_x1 + 1;
       break;
 
+      case 'M':
+        touchpad.sendMouseReport(0, finger_x1, finger_y1);
+      break;
+
       default: break;
     }
   }
     
   if (finger_down) {
-    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time - last_scan_time, 1);
+//    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time - last_scan_time, 1);
+    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time, 1);
+    Serial.println(info);
     last_scan_time = scan_time;
-    Serial.println(millis());
-//    delay(1/);
+    delay(10);
   }
 }

@@ -4,6 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
+                "C:\\Users\\howard\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\nrf52\\**",
                 "/home/howard/.arduino15/**"
             ],
             "defines": [
