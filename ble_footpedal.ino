@@ -126,10 +126,10 @@ void loop()
   }
     
   if (finger_down) {
-//    bool info = touchpad.send_report(true, 1, finger_x1, finger_y1, scan_time - last_scan_time, 1);
-    bool info = touchpad.send_report(true, 1, finger_x1, finger_y1, scan_time, 1);
+    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time - last_scan_time, 1);
+//    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time, 1);
     Serial.println(info);
     last_scan_time = scan_time;
-    delay(10);
   }
+  delay(100);
 }
