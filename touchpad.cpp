@@ -39,6 +39,13 @@ uint8_t const hid_report_descriptor[] =
     0x81, 0x03,                         //       INPUT (Cnst,Var,Abs)
     // input: x (1 x 2 bytes)
     0x05, 0x01,                         //       USAGE_PAGE (Generic Desk..
+    // 0x09, 0x30,                         //     USAGE (X)                    
+    // 0x09, 0x31,                         //     USAGE (Y)                    
+    // 0x75, 0x10,                         //     REPORT_SIZE (16)             
+    // 0x95, 0x02,                         //     REPORT_COUNT (2)             
+    // 0x15, 0x81,                        
+    // 0x25, 0x7f,                        
+    // 0x81, 0x06,                         //     INPUT (Data,Var,Rel)
     0x15, 0x00,                         //       LOGICAL_MINIMUM (0)
     0x26, 0xff, 0x0f,                   //       LOGICAL_MAXIMUM (4095)         
     0x75, 0x10,                         //       REPORT_SIZE (16)             
@@ -102,7 +109,7 @@ uint8_t const hid_report_descriptor[] =
     0xb1, 0x02,                         //    FEATURE (Data,Var,Abs)
     0xc0,                               // END_COLLECTION
     
-    // ---------- CONFIG TLC ----------
+    // ---------- Config ----------
     0x05, 0x0d,                         // USAGE_PAGE (Digitizer)
     0x09, 0x0E,                         // USAGE (Configuration)
     0xa1, 0x01,                         // COLLECTION (Application)
@@ -153,12 +160,20 @@ uint8_t const hid_report_descriptor[] =
     0x95, 0x06,                         //     REPORT_COUNT (6)             
     0x81, 0x03,                         //     INPUT (Cnst,Var,Abs)
     // input: x and y (2 x 2 bytes)
+    // 0x05, 0x01,                         //     USAGE_PAGE (Generic Desktop) 
+    // 0x09, 0x30,                         //     USAGE (X)                    
+    // 0x09, 0x31,                         //     USAGE (Y)                    
+    // 0x75, 0x08,                         //     REPORT_SIZE (16)             
+    // 0x95, 0x02,                         //     REPORT_COUNT (2)             
+    // 0x15, 0x81,                        
+    // 0x25, 0x7f,                        
+    // 0x81, 0x06,                         //     INPUT (Data,Var,Rel)
     0x05, 0x01,                         //     USAGE_PAGE (Generic Desktop) 
     0x09, 0x30,                         //     USAGE (X)                    
     0x09, 0x31,                         //     USAGE (Y)                    
     0x75, 0x10,                         //     REPORT_SIZE (16)             
     0x95, 0x02,                         //     REPORT_COUNT (2)             
-    0x25, 0x0a,                         //     LOGICAL_MAXIMUM (10)      
+    0x25, 0x0a,                          //    LOGICAL_MAXIMUM (10)      
     0x81, 0x06,                         //     INPUT (Data,Var,Rel)
 
     0xc0,                               //   END_COLLECTION                 
@@ -186,7 +201,7 @@ uint8_t const certification[] =
     0xcf, 0x17, 0xb7, 0xb8, 0xf4, 0xe1, 0x33, 0x08, 0x24, 0x8b, 0xc4, 0x43, 0xa5, 0xe5, 0x24, 0xc2
 };
 
-uint8_t const max_count = 0x03;
+uint8_t const max_count = 0x13;
 
 typedef struct {
     // one report is sent with each finger which is identified by its contact id
@@ -205,13 +220,13 @@ typedef struct {
         // when more than one finger is in contact, each one of the finger's reports should have the same scan time
     int8_t contact_count; // number of fingers on the touchpad (between 0 and 3)
     uint8_t button; // whether the touchpad is pressed hard enough to click (0 or 1)
-} touchpad_report_t;
+} __attribute__((packed, aligned(1))) touchpad_report_t;
 
 typedef struct {
     uint8_t button; // bitmap: Button 1 | Button 2 | empty (6 bits)
     int16_t x; // between 0 and 10
     int16_t y; // between 0 and 10
-} mouse_report_t;
+} __attribute__((packed, aligned(1))) mouse_report_t;
 
 // report sizes for feature reports
 #define INPUT_MODE_REPORT_SIZE 1
@@ -256,12 +271,12 @@ err_t BLEHidTouchpad::begin()
     VERIFY_STATUS( chr_touchpad->begin() );
 
     chr_mouse->setUuid(UUID16_CHR_REPORT);
+    Serial.println("about to set properties");
     chr_mouse->setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
     chr_mouse->setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
     chr_mouse->setReportRefDescriptor(REPORTID_MOUSE, REPORT_TYPE_INPUT);
     chr_mouse->setFixedLen(sizeof(mouse_report_t));
     VERIFY_STATUS( chr_mouse->begin() );
-
 
     // feature reports
     chr_max_count->setUuid(UUID16_CHR_REPORT);
@@ -297,18 +312,18 @@ err_t BLEHidTouchpad::begin()
     chr_selective_reporting->setWriteAuthorizeCallback(selective_reporting_callback);
     VERIFY_STATUS( chr_selective_reporting->begin() );
 
-    Serial.print("1: ");
-    Serial.println(chr_touchpad->handles().value_handle);
-    Serial.print("2: ");
-    Serial.println(chr_mouse->handles().value_handle);
-    Serial.print("3: ");
-    Serial.println(chr_max_count->handles().value_handle);
-    Serial.print("4: ");
-    Serial.println(chr_certification->handles().value_handle);
-    Serial.print("5: ");
-    Serial.println(chr_input_mode->handles().value_handle);
-    Serial.print("6: ");
-    Serial.println(chr_selective_reporting->handles().value_handle);
+    // Serial.print("1: ");
+    // Serial.println(chr_touchpad->handles().value_handle);
+    // Serial.print("2: ");
+    // Serial.println(chr_mouse->handles().value_handle);
+    // Serial.print("3: ");
+    // Serial.println(chr_max_count->handles().value_handle);
+    // Serial.print("4: ");
+    // Serial.println(chr_certification->handles().value_handle);
+    // Serial.print("5: ");
+    // Serial.println(chr_input_mode->handles().value_handle);
+    // Serial.print("6: ");
+    // Serial.println(chr_selective_reporting->handles().value_handle);
 
     // Attempt to change the connection interval to 11.25-15 ms when starting HID
     Bluefruit.Periph.setConnInterval(9, 12);
@@ -337,18 +352,16 @@ void BLEHidTouchpad::max_count_callback(uint16_t conn_hdl, BLECharacteristic* ch
     Serial.println(sd_ble_gatts_rw_authorize_reply(conn_hdl, &reply));
 }
 
-void BLEHidTouchpad::certification_write_callback(uint16_t conn_hdl, BLECharacteristic* chr, ble_gatts_evt_write_t* request)
-{
-    Serial.print("certification callback write ");
-    Serial.println(request->len);
-}
+// void BLEHidTouchpad::certification_write_callback(uint16_t conn_hdl, BLECharacteristic* chr, ble_gatts_evt_write_t* request)
+// {
+//     Serial.print("certification callback write ");
+//     Serial.println(request->len);
+// }
 
 void BLEHidTouchpad::certification_callback(uint16_t conn_hdl, BLECharacteristic* chr, ble_gatts_evt_read_t* request)
 {
     Serial.print("certification callback ");
-    Serial.print(conn_hdl);
-    Serial.print(" ");
-    Serial.print(BLE_CONN_HANDLE_INVALID);
+    Serial.print(request->offset);
     Serial.print(" ");
 
     ble_gatts_rw_authorize_reply_params_t reply;
@@ -366,9 +379,7 @@ void BLEHidTouchpad::certification_callback(uint16_t conn_hdl, BLECharacteristic
 
 void BLEHidTouchpad::input_mode_callback(uint16_t conn_hdl, BLECharacteristic* chr, ble_gatts_evt_write_t* request)
 {
-    Serial.println("input mode callback ");
-    Serial.println(request->len);
-    Serial.println(request->auth_required);
+    Serial.print("input mode callback ");
     Serial.println(request->data[0]);
 
     // ble_gatts_rw_authorize_reply_params_t reply;
@@ -423,21 +434,41 @@ bool BLEHidTouchpad::send_report(bool tip_switch, uint8_t contact_id, int16_t x,
     report.contact_count = contact_count;
     report.button = button;
 
-    Serial.println("Sending Report");
-    Serial.println(report.contact_data, BIN);
+    Serial.print("Sending Report size:");
+    Serial.print(sizeof(report));
+    Serial.print(" contact_data:");
+    Serial.print(report.contact_data, BIN);
+    Serial.print(" x:");
+    Serial.print(report.x);
+    Serial.print(" y:");
+    Serial.print(report.y);
+    Serial.print(" scan_time:");
+    Serial.print(report.scan_time);
+    Serial.print(" contact_count:");
+    Serial.print(report.contact_count);
+    Serial.print(" button:");
+    Serial.print(report.button);
+    Serial.println();
 
     // return inputReport(BLE_CONN_HANDLE_INVALID, REPORTID_TOUCHPAD, &report, sizeof(touchpad_report_t));
-    Serial.println(sizeof(report));
     return chr_touchpad->notify(BLE_CONN_HANDLE_INVALID, &report, sizeof(report));
 }
 
-bool BLEHidTouchpad::sendMouseReport(uint8_t button, int16_t x, int16_t y)
+bool BLEHidTouchpad::sendMouseReport(uint8_t button, int8_t x, int8_t y)
 {
     mouse_report_t report;
     report.button = button;
     report.x = x;
     report.y = y;
 
-    Serial.println("Sending Mouse Report");
-    return chr_touchpad->notify(0, &report, sizeof(report));
+    Serial.print("Sending Mouse Report size:");
+    Serial.print(sizeof(report));
+    Serial.print(" button:");
+    Serial.print(report.button);
+    Serial.print(" x:");
+    Serial.print(report.x);
+    Serial.print(" y:");
+    Serial.print(report.y);
+    Serial.println();
+    return chr_mouse->notify(BLE_CONN_HANDLE_INVALID, &report, sizeof(report));
 }

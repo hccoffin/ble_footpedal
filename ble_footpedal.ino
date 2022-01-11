@@ -5,8 +5,8 @@ BLEDis bledis;
 BLEHidTouchpad touchpad;
 
 bool finger_down = false;
-int16_t finger_x1 = 2000;
-int16_t finger_y1 = 2000;
+int16_t finger_x1 = 0;
+int16_t finger_y1 = 0;
 int16_t last_scan_time = 0;
 
 void setup() 
@@ -101,23 +101,24 @@ void loop()
 
       // WASD to move the mouse
       case 'W':
-        finger_y1 = finger_y1 + 1;
+        finger_y1 = finger_y1 + 10;
       break;
 
       case 'A':
-        finger_x1 = finger_x1 - 1;
+        finger_x1 = finger_x1 - 10;
       break;
 
       case 'S':
-        finger_y1  = finger_y1 - 1;
+        finger_y1  = finger_y1 - 10;
       break;
 
       case 'D':
-        finger_x1 = finger_x1 + 1;
+        finger_x1 = finger_x1 + 10;
       break;
 
       case 'M':
-        touchpad.sendMouseReport(0, finger_x1, finger_y1);
+        Serial.print("Mouse report result: ");
+        Serial.println(touchpad.sendMouseReport(0, finger_x1, finger_y1));
       break;
 
       default: break;
@@ -125,8 +126,8 @@ void loop()
   }
     
   if (finger_down) {
-//    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time - last_scan_time, 1);
-    bool info = touchpad.send_report(true, 0, finger_x1, finger_y1, scan_time, 1);
+//    bool info = touchpad.send_report(true, 1, finger_x1, finger_y1, scan_time - last_scan_time, 1);
+    bool info = touchpad.send_report(true, 1, finger_x1, finger_y1, scan_time, 1);
     Serial.println(info);
     last_scan_time = scan_time;
     delay(10);
