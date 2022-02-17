@@ -7,7 +7,11 @@ class BLEHidTouchpad : public BLEHidGeneric
 
     BLEHidTouchpad();
     virtual err_t begin();
-    bool send_report(bool tip_switch, uint8_t contact_id, int16_t x, int16_t y, int16_t scan_time, int8_t contact_count=0, bool button=false);
+    bool send_report(
+      bool tip_switch1, uint8_t contact_id1, int16_t x1, int16_t y1,
+      bool tip_switch2, uint8_t contact_id2, int16_t x2, int16_t y2, 
+      int16_t scan_time, int8_t contact_count, bool button=false
+    );
     bool sendMouseReport(uint8_t button, int8_t x, int8_t y);
     bool put_down_fingers(int8_t n_fingers);
 

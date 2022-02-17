@@ -16,7 +16,9 @@ uint8_t const hid_report_descriptor[] =
     0x05, 0x0d,                         // USAGE_PAGE (Digitizers)          
     0x09, 0x05,                         // USAGE (Touch Pad)             
     0xa1, 0x01,                         // COLLECTION (Application)         
-    0x85, REPORTID_TOUCHPAD,            //   REPORT_ID (Touch pad)              
+    0x85, REPORTID_TOUCHPAD,            //   REPORT_ID (Touch pad)
+
+    // --- Finger Collection 1 ---          
     0x09, 0x22,                         //   USAGE (Finger)                 
     0xa1, 0x02,                         //   COLLECTION (Logical)
     // input: confidence and tip switch (2 x 1 bits)
@@ -39,13 +41,6 @@ uint8_t const hid_report_descriptor[] =
     0x81, 0x03,                         //       INPUT (Cnst,Var,Abs)
     // input: x (1 x 2 bytes)
     0x05, 0x01,                         //       USAGE_PAGE (Generic Desk..
-    // 0x09, 0x30,                         //     USAGE (X)                    
-    // 0x09, 0x31,                         //     USAGE (Y)                    
-    // 0x75, 0x10,                         //     REPORT_SIZE (16)             
-    // 0x95, 0x02,                         //     REPORT_COUNT (2)             
-    // 0x15, 0x81,                        
-    // 0x25, 0x7f,                        
-    // 0x81, 0x06,                         //     INPUT (Data,Var,Rel)
     0x15, 0x00,                         //       LOGICAL_MINIMUM (0)
     0x26, 0xff, 0x7f,                   //       LOGICAL_MAXIMUM (32767)         
     0x75, 0x10,                         //       REPORT_SIZE (16)             
@@ -60,8 +55,49 @@ uint8_t const hid_report_descriptor[] =
     0x46, 0x98, 0x08,                   //       PHYSICAL_MAXIMUM (2200)
     0x09, 0x31,                         //       USAGE (Y)                    
     0x81, 0x02,                         //       INPUT (Data,Var,Abs)
-
     0xc0,                               //    END_COLLECTION
+
+    // --- Finger Collection 2 ---
+    0x05, 0x0d,                         //   USAGE_PAGE (Digitizers)
+    0x09, 0x22,                         //   USAGE (Finger)                 
+    0xa1, 0x02,                         //   COLLECTION (Logical)
+    // input: confidence and tip switch (2 x 1 bits)
+    0x15, 0x00,                         //       LOGICAL_MINIMUM (0)
+    0x25, 0x01,                         //       LOGICAL_MAXIMUM (1)
+    0x09, 0x47,                         //       USAGE (Confidence) 
+    0x09, 0x42,                         //       USAGE (Tip switch)
+    0x95, 0x02,                         //       REPORT_COUNT (2)
+    0x75, 0x01,                         //       REPORT_SIZE (1)
+    // input: contact id (1 x 2 bits)
+    0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    0x95, 0x01,                         //       REPORT_COUNT (1)
+    0x75, 0x02,                         //       REPORT_SIZE (2)
+    0x25, 0x02,                         //       LOGICAL_MAXIMUM (2)
+    0x09, 0x51,                         //       USAGE (Contact Identifier)
+    0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    // constants to pad (4 bits)
+    0x75, 0x01,                         //       REPORT_SIZE (1)
+    0x95, 0x04,                         //       REPORT_COUNT (4)             
+    0x81, 0x03,                         //       INPUT (Cnst,Var,Abs)
+    // input: x (1 x 2 bytes)
+    0x05, 0x01,                         //       USAGE_PAGE (Generic Desk..
+    0x15, 0x00,                         //       LOGICAL_MINIMUM (0)
+    0x26, 0xff, 0x7f,                   //       LOGICAL_MAXIMUM (32767)         
+    0x75, 0x10,                         //       REPORT_SIZE (16)             
+    0x55, 0x0e,                         //       UNIT_EXPONENT (-2)           
+    0x65, 0x13,                         //       UNIT(Inch,EngLinear)                  
+    0x09, 0x30,                         //       USAGE (X)                    
+    0x35, 0x00,                         //       PHYSICAL_MINIMUM (0)         
+    0x46, 0x80, 0x0C,                   //       PHYSICAL_MAXIMUM (3200)
+    0x95, 0x01,                         //       REPORT_COUNT (1)         
+    0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    // input: y (1 x 2 bytes)
+    0x46, 0x98, 0x08,                   //       PHYSICAL_MAXIMUM (2200)
+    0x09, 0x31,                         //       USAGE (Y)                    
+    0x81, 0x02,                         //       INPUT (Data,Var,Abs)
+    0xc0,                               //    END_COLLECTION
+
+
     // input: scan time (1 x 2 bytes)
     0x55, 0x0C,                         //    UNIT_EXPONENT (-4)           
     0x66, 0x01, 0x10,                   //    UNIT (Seconds)        
@@ -159,15 +195,6 @@ uint8_t const hid_report_descriptor[] =
     // input: constants to pad (6 bits)
     0x95, 0x06,                         //     REPORT_COUNT (6)             
     0x81, 0x03,                         //     INPUT (Cnst,Var,Abs)
-    // input: x and y (2 x 2 bytes)
-    // 0x05, 0x01,                         //     USAGE_PAGE (Generic Desktop) 
-    // 0x09, 0x30,                         //     USAGE (X)                    
-    // 0x09, 0x31,                         //     USAGE (Y)                    
-    // 0x75, 0x08,                         //     REPORT_SIZE (16)             
-    // 0x95, 0x02,                         //     REPORT_COUNT (2)             
-    // 0x15, 0x81,                        
-    // 0x25, 0x7f,                        
-    // 0x81, 0x06,                         //     INPUT (Data,Var,Rel)
     0x05, 0x01,                         //     USAGE_PAGE (Generic Desktop) 
     0x09, 0x30,                         //     USAGE (X)                    
     0x09, 0x31,                         //     USAGE (Y)                    
@@ -201,11 +228,12 @@ uint8_t const certification[] =
     0xcf, 0x17, 0xb7, 0xb8, 0xf4, 0xe1, 0x33, 0x08, 0x24, 0x8b, 0xc4, 0x43, 0xa5, 0xe5, 0x24, 0xc2
 };
 
-uint8_t const max_count = 0x05;
+uint8_t const max_count = 0x04;
 
 typedef struct {
     // one report is sent with each finger which is identified by its contact id
-    uint8_t contact_data; // bitmap: Confidence | Tip Switch | Contact ID (2 bits) | empty (4 bits)
+    uint8_t contact_data1; // information about the finger contact for finger 1
+        // bitmap: Confidence | Tip Switch | Contact ID (2 bits) | empty (4 bits)
         // confidence = 1 if contact is too large for a finger (should probably always be 0 for me)
         // tip switch = 1 if the contact is on the surface of the touchpad
             // when a finger is put on the touchpad the tip switch is turned on (1)
@@ -213,8 +241,11 @@ typedef struct {
             // then, no more reports are sent for that fingers contact
         // contact id identifies which finger we are sending the data for 
             // e.g., for two fingers we would have contact id 0 for the first report and contact id 1 for the second report
-    int16_t x; // x position of finger (between 0 and 4095)
-    int16_t y; // y position of finger (between 0 and 4095)
+    int16_t x1; // x position of finger 1 (between 0 and 4095)
+    int16_t y1; // y position of finger 1 (between 0 and 4095)
+    uint8_t contact_data2;
+    int16_t x2;
+    int16_t y2;
     int16_t scan_time; // in 100 microsecond units
         // seems like this should be reported at consistent intervals while at least one finger is on the touchpad
         // when more than one finger is in contact, each one of the finger's reports should have the same scan time
@@ -291,7 +322,6 @@ err_t BLEHidTouchpad::begin()
     chr_certification->setReportRefDescriptor(REPORTID_CERTIFICATION, REPORT_TYPE_FEATURE);
     chr_certification->setFixedLen(sizeof(certification));
     chr_certification->setReadAuthorizeCallback(certification_callback);
-    // chr_certification->setWriteAuthorizeCallback(certification_write_callback);
     VERIFY_STATUS( chr_certification->begin() );
 
     chr_input_mode->setUuid(UUID16_CHR_REPORT);
@@ -309,22 +339,6 @@ err_t BLEHidTouchpad::begin()
     chr_selective_reporting->setFixedLen(SELECTIVE_REPORTING_REPORT_SIZE);
     chr_selective_reporting->setWriteAuthorizeCallback(selective_reporting_callback);
     VERIFY_STATUS( chr_selective_reporting->begin() );
-
-    // Serial.print("1: ");
-    // Serial.println(chr_touchpad->handles().value_handle);
-    // Serial.print("2: ");
-    // Serial.println(chr_mouse->handles().value_handle);
-    // Serial.print("3: ");
-    // Serial.println(chr_max_count->handles().value_handle);
-    // Serial.print("4: ");
-    // Serial.println(chr_certification->handles().value_handle);
-    // Serial.print("5: ");
-    // Serial.println(chr_input_mode->handles().value_handle);
-    // Serial.print("6: ");
-    // Serial.println(chr_selective_reporting->handles().value_handle);
-
-    // Attempt to change the connection interval to 11.25-15 ms when starting HID
-    // Bluefruit.Periph.setConnInterval(9, 12);
 
     return ERROR_NONE;
 }
@@ -350,12 +364,6 @@ void BLEHidTouchpad::max_count_callback(uint16_t conn_hdl, BLECharacteristic* ch
     sd_ble_gatts_rw_authorize_reply(conn_hdl, &reply);
     // Serial.println(sd_ble_gatts_rw_authorize_reply(conn_hdl, &reply));
 }
-
-// void BLEHidTouchpad::certification_write_callback(uint16_t conn_hdl, BLECharacteristic* chr, ble_gatts_evt_write_t* request)
-// {
-//     Serial.print("certification callback write ");
-//     Serial.println(request->len);
-// }
 
 void BLEHidTouchpad::certification_callback(uint16_t conn_hdl, BLECharacteristic* chr, ble_gatts_evt_read_t* request)
 {
@@ -421,69 +429,47 @@ void BLEHidTouchpad::selective_reporting_callback(uint16_t conn_hdl, BLECharacte
 }
 
 
-bool BLEHidTouchpad::send_report(bool tip_switch, uint8_t contact_id, int16_t x, int16_t y, int16_t scan_time, int8_t contact_count, bool button)
-{
-    // For each frame, one report should be sent for each finger on the pad
-        // contact_id should be between 0 and 3 representing which finger is being reported
-        // contact count should be reported for only the first finger and indicates how many fingers are on the pad. Subsequent figners reports should have it set to 0
-        // when a finger is put on the pad, the tip switch is set to true
-        // when a finger has been taken off, the tip switch is set to false for one frame with the same (x, y) coords as the last frame
-            // after this frame, the finger does not need to keep being reported
-            // contact count shouldn't change until the frame after the tip switch is switched to false
-        // scan time should be reported as the same for all fingers in the frame and is in 100 microsecond units (i.e., (int16_t) (micros() / 100))
-    // x and y should be between -128 and 127
+bool BLEHidTouchpad::send_report(
+    bool tip_switch1, uint8_t contact_id1, int16_t x1, int16_t y1,
+    bool tip_switch2, uint8_t contact_id2, int16_t x2, int16_t y2,
+    int16_t scan_time, int8_t contact_count, bool button
+) {
 
     if (!touchpad) {
       return false;
     }
     
     touchpad_report_t report;
-    report.contact_data = tip_switch + (tip_switch << 1) + (contact_id << 2);
-    report.x = x;
-    report.y = y;
+    report.contact_data1 = tip_switch1 + (tip_switch1 << 1) + (contact_id1 << 2);
+    report.x1 = x1;
+    report.y1 = y1;
+    report.contact_data2 = tip_switch2 + (tip_switch2 << 1) + (contact_id2 << 2);
+    report.x2 = x2;
+    report.y2 = y2;
     report.scan_time = scan_time;
     report.contact_count = contact_count;
     report.button = button;
 
-    //  Serial.print("Sending Report size:");
-    //  Serial.print(sizeof(report));
-    //  Serial.print(" contact_data:");
-    //  Serial.print(report.contact_data, BIN);
-    //  Serial.print(" x:");
-    //  Serial.print(report.x);
-    //  Serial.print(" y:");
-    //  Serial.print(report.y);
-    //  Serial.print(" scan_time:");
-    //  Serial.print(report.scan_time);
-    //  Serial.print(" contact_count:");
-    //  Serial.print(report.contact_count);
-    //  Serial.print(" button:");
-    //  Serial.print(report.button);
-    //  Serial.println();
-
-    // return inputReport(BLE_CONN_HANDLE_INVALID, REPORTID_TOUCHPAD, &report, sizeof(touchpad_report_t));
-    return chr_touchpad->notify(BLE_CONN_HANDLE_INVALID, &report, sizeof(report));
-}
-
-bool BLEHidTouchpad::sendMouseReport(uint8_t button, int8_t x, int8_t y)
-{
-    if (touchpad) {
-      return false;
-    }
-    
-    mouse_report_t report;
-    report.button = button;
-    report.x = x;
-    report.y = y;
-
-    // Serial.print("Sending Mouse Report size:");
-    // Serial.print(sizeof(report));
-    // Serial.print(" button:");
-    // Serial.print(report.button);
-    // Serial.print(" x:");
-    // Serial.print(report.x);
-    // Serial.print(" y:");
-    // Serial.print(report.y);
+    // Serial.println(sizeof(report));
+    // Serial.print("data1: ");
+    // Serial.print(report.contact_data1, BIN);
+    // Serial.print(" x1: ");
+    // Serial.print(report.x1);
+    // Serial.print(" y1: ");
+    // Serial.println(report.y1);
+    // Serial.print("data2: ");
+    // Serial.print(report.contact_data2, BIN);
+    // Serial.print(" x2: ");
+    // Serial.print(report.x2);
+    // Serial.print(" y2: ");
+    // Serial.println(report.y2);
+    // Serial.print("scan time: ");
+    // Serial.print(report.scan_time);
+    // Serial.print(" contact count: ");
+    // Serial.print(report.contact_count);
+    // Serial.print(" button: ");
+    // Serial.println(button);
     // Serial.println();
-    return chr_mouse->notify(BLE_CONN_HANDLE_INVALID, &report, sizeof(report));
+
+    return chr_touchpad->notify(BLE_CONN_HANDLE_INVALID, &report, sizeof(report));
 }

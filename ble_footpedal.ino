@@ -14,16 +14,18 @@ float pot_min = 524;
 float pot_max = 676;
 float pot_middle = (pot_min + pot_max) / 2;
 float dead_enter = 5;
-float dead_exit = 10;
+float dead_exit = 15;
 
 float pot_smoothed = pot_middle;
-float max_speed = 20;//2;
-float min_speed = .2;//.02;
+float max_speed = 1000;
+float min_speed = 10;
+
+int16_t prev_scan_time = 0;
 
 void setup() 
 {
-  Serial.begin(115200);
-  while ( !Serial ) delay(10);   // for nrf52840 with native usb
+//  Serial.begin(115200);
+//  while ( !Serial ) delay(10);   // for nrf52840 with native usb
 
   Bluefruit.configPrphBandwidth(BANDWIDTH_MAX);
   Bluefruit.begin();
@@ -75,56 +77,80 @@ void startAdv(void)
 void loop() 
 {
   int16_t scan_time = micros() / 100;
+  int16_t dt16 = scan_time - prev_scan_time;
+  float dt = (float)dt16 / 10000;
+  prev_scan_time = scan_time;
 
   pot_smoothed = 0;
-  for (int i = 0; i < 10; i++){
+  for (int i = 0; i < 30; i++){
     pot_smoothed += (float) analogRead(pot_pin);
   }
-  pot_smoothed = pot_smoothed / 10;
+  pot_smoothed = pot_smoothed / 30;
   boolean in_dead_enter = pot_smoothed > (pot_middle - dead_enter) && pot_smoothed < (pot_middle + dead_enter);
   boolean in_dead_exit = pot_smoothed > (pot_middle - dead_exit) && pot_smoothed < (pot_middle + dead_exit);
   
   if ((in_dead_enter && finger_down)) {
     finger_down = false;
-    touchpad.send_report(false, 0 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
-    touchpad.send_report(false, 1 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
+    touchpad.send_report(
+      false, 0 + finger_offset, 0, (int16_t) finger_y,
+      false, 1 + finger_offset, 0, (int16_t) finger_y,
+      scan_time, 2
+    );
+    finger_y = 32767 / 2;
+//    finger_offset = (finger_offset + 2) % 4;
   } else if (!in_dead_exit && !finger_down) {
     finger_down = true;
-    touchpad.send_report(true, 0 + finger_offset, 0, (int16_t) finger_y, scan_time, 2);
-    touchpad.send_report(true, 1 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
+    touchpad.send_report(
+      true, 0 + finger_offset, 0, (int16_t) finger_y,
+      true, 1 + finger_offset, 0, (int16_t) finger_y,
+      scan_time, 2
+    );
   } else if (finger_down && pot_smoothed < (pot_middle - dead_enter)) {
     // moving up
     float proportion = ((pot_middle - dead_exit) - pot_smoothed) / ((pot_middle - dead_exit) - pot_min);
     proportion = max(0, min(proportion, 1));
     proportion = pow(proportion, 2);
-    float new_finger_y = finger_y + proportion * max_speed + min_speed;
+    float new_finger_y = finger_y + (proportion * max_speed + min_speed) * dt;
     
     if (new_finger_y > 32767) {
-      touchpad.send_report(false, 0 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
-      touchpad.send_report(false, 1 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
+      touchpad.send_report(
+        false, 0 + finger_offset, 0, (int16_t) finger_y, 
+        false, 1 + finger_offset, 0, (int16_t) finger_y,
+        scan_time, 2
+      );
       finger_y = new_finger_y - 32767;
-      finger_offset = (finger_offset + 2) % 5;
+//      finger_offset = (finger_offset + 2) % 4;
     } else {
       finger_y = new_finger_y;
+      touchpad.send_report(
+        true, 0 + finger_offset, 0, (int16_t) finger_y, 
+        true, 1 + finger_offset, 0, (int16_t) finger_y,
+        scan_time, 2
+      );
     }
-    touchpad.send_report(true, 0 + finger_offset, 0, (int16_t) finger_y, scan_time, 2);
-    touchpad.send_report(true, 1 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
   } else if (finger_down && pot_smoothed > (pot_middle + dead_enter)) {
     // moving down
     float proportion = (pot_smoothed - (pot_middle + dead_exit)) / (pot_max - (pot_middle + dead_exit));
     proportion = max(0, min(proportion, 1));
     proportion = pow(proportion, 2);
-    float new_finger_y = finger_y - (proportion * max_speed + min_speed);
+    float new_finger_y = finger_y - (proportion * max_speed + min_speed) * dt;
 
     if (new_finger_y < 0) {
-      touchpad.send_report(false, 0 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
-      touchpad.send_report(false, 1 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
+      touchpad.send_report(
+        false, 0 + finger_offset, 0, (int16_t) finger_y,
+        false, 1 + finger_offset, 0, (int16_t) finger_y,
+        scan_time, 2
+      );
       finger_y = new_finger_y + 32767;
-      finger_offset = (finger_offset + 2) % 5;
+//      finger_offset = (finger_offset + 2) % 4;
     } else {
       finger_y = new_finger_y;
+      touchpad.send_report(
+        true, 0 + finger_offset, 0, (int16_t) finger_y,
+        true, 1 + finger_offset, 0, (int16_t) finger_y,
+        scan_time, 2
+      );
     }
-    touchpad.send_report(true, 0 + finger_offset, 0, (int16_t) finger_y, scan_time, 2);
-    touchpad.send_report(true, 1 + finger_offset, 0, (int16_t) finger_y, scan_time, 0);
   }
+  delay(10);
 }
